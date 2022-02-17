@@ -1,0 +1,29 @@
+import os
+from setuptools import setup
+
+here = os.path.abspath(os.path.dirname(__file__))
+README = open(os.path.join(here, 'README.md')).read()
+
+setup(
+    name='django-jwt',
+    version='0.1',
+    packages=['django_jwt'],
+    description='Django library that implements the authentification for OpenId SSO with JWT from oauth2.',
+    long_description=README,
+    author='Arnau Casas Saez',
+    author_email='casassarnau@gmail.com',  # SEE NOTE BELOW (*)
+    url='https://github.com/Casassarnau/django-jwt',
+    license='MIT',
+    python_requires='>=3.6',
+    install_requires=[
+        'django>=2.2',
+        'pycryptodome',
+        'jwcrypto',
+    ]
+)
+
+# (*) Please direct queries to the discussion group, rather than to me directly
+#     Doing so helps ensure your question is helpful to other users.
+#     Queries directly to my email are likely to receive a canned response.
+#
+#     Many thanks for your understanding.

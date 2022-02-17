@@ -1,0 +1,2 @@
+class JWTClientException(Exception):
+    pass

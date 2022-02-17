@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fake Login</title>
+</head>
+<body>
+    <h1>Fake Login</h1>
+    <p>
+        Fake login page for development
+    </p>
+    <p>
+        This will be the 'sub' atribute of the jwt Token
+    </p>
+    <form method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="request_uri" value="{{request_uri}}" />
+        <input type="hidden" name="state" value="{{state}}" />
+        <input type="username" name="username" placeholder="username">
+        <button>Login</button>
+    </form>
+</body>
+</html>
