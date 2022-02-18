@@ -3,7 +3,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.utils.deprecation import MiddlewareMixin
 from jwcrypto.common import JWException
 
-from django_jwt.auth import JWTAuthentication
+from django_jwt import JWTAuthentication
 
 
 class JWTAuthenticationMiddleware(MiddlewareMixin):

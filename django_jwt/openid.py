@@ -14,7 +14,7 @@ class OpenId2Info:
         url = getattr(settings, 'JWT_OPENID2_URL', None)
         if url is None:
             raise JWTClientException('JWT_OPENID2_URL not set')
-        if url == 'local':
+        if url == 'fake':
             url = getattr(settings, 'DEFAULT_DOMAIN', 'http:localhost:8000') + reverse('fake_config')
         else:
             url += '/.well-known/openid-configuration'

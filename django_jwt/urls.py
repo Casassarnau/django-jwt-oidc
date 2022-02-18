@@ -5,7 +5,7 @@ from django_jwt import views
 
 urlpatterns = []
 
-if getattr(settings, 'JWT_OPENID2_URL', None) == 'local':
+if getattr(settings, 'JWT_OPENID2_URL', None) == 'fake':
     urlpatterns.extend([
         path('jwks', views.jwks, name="fake_jwks"),
         path('fake-login', views.fake_login, name="fake_login"),

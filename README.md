@@ -1,6 +1,22 @@
-# django-jwt
+# django-jwt-oidc
 Django library that implements the authentification for OpenId SSO with JWT from oauth2.
 This authentification is compatible with django session workflow and the RestFramework library.
+
+## Installation
+
+Install the library with pip
+```bash
+pip install django-jwt-oidc
+```
+
+Add the `django_jwt` package into your `INSTALLED_APPS` in your settings.py file
+```python
+INSTALLED_APPS = [
+    ...
+    'django_jwt',
+    ...
+]
+```
 
 ## Django [WIP]
 This is what you need to do in order that your Django application will authenticate with JWT.
@@ -12,9 +28,11 @@ This settings are for views inherits RestFramework library from Django.
 ### View setting
 You can add this to your APIviews class by adding `JWTTokenAuthentication` to `authentification_classes` attribute.
 In this example, the view requires that all requests must have JWT Bearer Authentication.
+
 ```python
 from rest_framework import permissions, views
-from django_jwt.rest_framework import JWTTokenAuthentication
+from django_jwt import JWTTokenAuthentication
+
 
 class ExampleAPIView(view.APIView):
     authentication_classes = [JWTTokenAuthentication]
@@ -37,7 +55,7 @@ The openid service url without the `/.well-known/openid-configuration` path.
 ```python
 JWT_OPENID2_URL = 'https://localhost:8000'
 ```
-**Developing only:** If this setting is set to `'local'`, it will deploy a fake openid service, you will need to inlcude the `'django_jwt.urls'` on your urls.py and also set `DEFAULT_DOMAIN` to your app domain.
+**Developing only:** If this setting is set to `'fake'`, it will deploy a fake openid service, you will need to inlcude the `'django_jwt.urls'` on your urls.py and also set `DEFAULT_DOMAIN` to your app domain.
 
 ### JWT_RENAME_ATTRIBUTES
 Dictionary to redirect the data and the `sub` attribute into the User attributes.
