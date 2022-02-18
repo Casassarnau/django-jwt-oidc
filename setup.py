@@ -6,7 +6,7 @@ README = open(os.path.join(here, 'README.md')).read()
 
 setup(
     name='django-jwt-oidc',
-    version='0.1',
+    version='0.1.1',
     packages=['django_jwt'],
     description='Django library that implements the authentification for OpenId SSO with JWT from oauth2.',
     long_description=README,
