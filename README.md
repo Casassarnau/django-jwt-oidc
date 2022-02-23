@@ -67,13 +67,15 @@ DEFAULT_DOMAIN = 'https://localhost:8000'
 ## Server
 This is an extra app of the django_jwt app that deploys a OpenId server with oauth 2.0 with implicit flow (more coming soon).
 The JWTs are signed by a RS256 algorithm that regenerates the rsa private keys.
-Access tokens expire after 1 hour kept by the Implicit Flow protocol.
+Access tokens expire after 1 hour kept by the Implicit Flow protocol. <br>
+**Django JWT Server does not provide for a login view.**
 
 ### Installation
 - Install [django-cors-headers](https://pypi.org/project/django-cors-headers/) library into your app. Required in order to control the CORS policy from your apps. **There is no need to add the domains one by one**
 - Add `django_jwt.server` to your installed apps.
 - Change the [CLIENT_JWT \[ OPENID2_URL \]](#openid2_url--jwt_client-) setting to `'local'`.
 - Migrate the database with `python manage.py migrate`.
+- Add your implemented Django log in into `LOGIN_URL` setting on `settings.py`.
 - Run your app in order to set up your hosts into the WebPage model.
 - (Optional) If you want to use your id_tokens in your app, set up the [CLIENT_JWT \[ CLIENT_ID \]](#client_id--jwt_client-) setting to the same client id that you just created.
 
