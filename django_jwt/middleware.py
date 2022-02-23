@@ -1,18 +1,17 @@
-from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.utils.deprecation import MiddlewareMixin
-from jwcrypto.common import JWException
 
-from django_jwt import JWTAuthentication
+from django_jwt.auth import JWTAuthentication
+from django_jwt.settings_utils import get_setting
 
 
 class JWTAuthenticationMiddleware(MiddlewareMixin):
     def process_request(self, request):
-        key = request.COOKIES.get(getattr(settings, 'JWT_COOKIE_NAME', 'token'), None)
+        key = request.COOKIES.get(get_setting('JWT_CLIENT.COOKIE_NAME'), None)
         user = None
         if key is not None:
             try:
                 user = JWTAuthentication.authenticate_credentials(key)
-            except JWException:
+            except JWTAuthentication.JWTException:
                 pass
         return user or AnonymousUser()

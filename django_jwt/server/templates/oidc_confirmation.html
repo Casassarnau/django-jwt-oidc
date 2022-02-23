@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmation</title>
+
+</head>
+<body>
+    <h1>Login confirmation for {{web.host}}</h1>
+    {% if denied %}
+        <p>You didn't want to log in into {{web.host}}</p>
+    {% endif %}
+    <form method="POST">
+        {% csrf_token %}
+        <button name="confirmation" value="true">Accept</button>
+        <button name="confirmation" value="false">Deny</button>
+    </form>
+</body>
+</html>

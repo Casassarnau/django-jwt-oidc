@@ -13,7 +13,6 @@ from django_jwt.patterns import Singleton
 
 
 class FakeJWT(metaclass=Singleton):
-
     def __init__(self) -> None:
         super().__init__()
         self.jks = self.get_jwk()
@@ -84,7 +83,7 @@ def crear_url_amb_jwt(request):
     expiration = timedelta(days=1)
     claim = {'sub': request.POST['username'], 'nonce': request.GET.get('nonce'), 'iat': int(now.timestamp()),
              'exp': int((now + expiration).timestamp()), 'iss': request.build_absolute_uri('/'),
-             'aud': request.GET.get('client_id')}
+             'aud': [request.GET.get('client_id')]}
     access_token = fake_jwt.generate_jwt(claim=claim)
     claim['at_hash'] = calculate_at_hash(access_token, hashlib.sha256)
     id_token = fake_jwt.generate_jwt(claim=claim)

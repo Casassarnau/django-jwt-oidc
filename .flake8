@@ -1,0 +1,4 @@
+[flake8]
+exclude = build,.git,./*/migrations,./venv,./env,./*.md,
+ignore = W601,F403,W504,F405
+max-line-length = 120
