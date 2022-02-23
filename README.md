@@ -1,4 +1,4 @@
-# django-jwt-oidc
+# Django jwt
 Django library that implements the authentification for OpenId SSO with JWT from oauth2.
 This authentification is compatible with django session workflow and the RestFramework library.
 
