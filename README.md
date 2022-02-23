@@ -53,6 +53,8 @@ This is an extra functionality of the `django_jwt` app that makes a OpenId serve
 
 ### Installation
 
+- Install [django-cors-headers](https://pypi.org/project/django-cors-headers/) library into your app. Required in order to control the CORS policy from your frontend.
+- Add your frontend domain into `CORS_ALLOWED_ORIGINS`.
 - Change the [CLIENT_JWT \[ OPENID2_URL \]](#openid2_url--jwt_client-) setting to `'fake'`.
 - Set up the [CLIENT_JWT \[ CLIENT_ID \]](#client_id--jwt_client-) setting to the same client id your frontend is targeting.
 - Include the `django_jwt.urls` into your `urls.py`.
@@ -68,6 +70,7 @@ The JWTs are signed by a RS256 algorithm that regenerates the rsa private keys.
 Access tokens expire after 1 hour kept by the Implicit Flow protocol.
 
 ### Installation
+- Install [django-cors-headers](https://pypi.org/project/django-cors-headers/) library into your app. Required in order to control the CORS policy from your apps. **There is no need to add the domains one by one**
 - Add `django_jwt.server` to your installed apps.
 - Change the [CLIENT_JWT \[ OPENID2_URL \]](#openid2_url--jwt_client-) setting to `'local'`.
 - Migrate the database with `python manage.py migrate`.
