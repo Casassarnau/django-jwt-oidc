@@ -1,11 +1,11 @@
-from django.conf import settings
 from django.urls import path
 
 from django_jwt import views
+from django_jwt.settings_utils import get_setting
 
 urlpatterns = []
 
-if getattr(settings, 'JWT_OPENID2_URL', None) == 'fake':
+if get_setting('JWT_CLIENT.OPENID2_URL') == 'fake':
     urlpatterns.extend([
         path('jwks', views.jwks, name="fake_jwks"),
         path('fake-login', views.fake_login, name="fake_login"),

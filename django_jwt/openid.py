@@ -1,21 +1,24 @@
 import json
 
 import urllib3
-from django.conf import settings
 from django.urls import reverse
 from jwcrypto.jwk import JWKSet
 
 from django_jwt.exceptions import JWTClientException
+from django_jwt.settings_utils import get_setting
 
 
 # singleton class that saves all information from the OpenId server
 class OpenId2Info:
     def __init__(self):
-        url = getattr(settings, 'JWT_OPENID2_URL', None)
-        if url is None:
-            raise JWTClientException('JWT_OPENID2_URL not set')
-        if url == 'fake':
-            url = getattr(settings, 'DEFAULT_DOMAIN', 'http:localhost:8000') + reverse('fake_config')
+        url = get_setting('JWT_CLIENT.OPENID2_URL')
+        if url == 'local':
+            apps = get_setting('INSTALLED_APPS')
+            if 'django_jwt.server' not in apps:
+                raise JWTClientException('JWT_CLIENT.OPENID2_URL not set or django_jwt.server not installed')
+            url = get_setting('DEFAULT_DOMAIN') + reverse('oidc_config')
+        elif url == 'fake':
+            url = get_setting('DEFAULT_DOMAIN') + reverse('fake_config')
         else:
             url += '/.well-known/openid-configuration'
 
