@@ -29,6 +29,8 @@ class JWTAuthentication:
                 raise cls.JWTException()
             OpenId2Info().fetch_jwks()
             jwt = cls.validate_jwt(token=token, second=True)
+        except Exception:
+            raise cls.JWTException()
         return jwt
 
     @classmethod
