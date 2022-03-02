@@ -11,10 +11,7 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-        ('sessions', '0001_initial'),
-        ('user', '0003_alter_person_email'),
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
