@@ -71,7 +71,12 @@ class AuthorizationView(LoginRequiredMixin, TemplateView):
             response_parameters['id_token'] = create_jwt_code(
                 request=self.request, token='id_token', session=external_session,
                 access_token=response_parameters.get('access_token', None))
-        return redirect(self.request.GET.get('redirect_uri') + '#' + urlencode(response_parameters))
+        redirect_uri = self.request.GET.get('redirect_uri')
+        if '?' in redirect_uri or '#' in redirect_uri:
+            redirect_uri += '&' + urlencode(response_parameters)
+        else:
+            redirect_uri += '?' + urlencode(response_parameters)
+        return redirect(redirect_uri)
 
     def post(self, request, *args, **kwargs):
         web = kwargs.get('web')

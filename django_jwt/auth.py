@@ -12,10 +12,10 @@ class JWTAuthentication:
         pass
 
     @classmethod
-    def authenticate_credentials(cls, key):
+    def authenticate_credentials(cls, key, nonce=None):
         jwt = cls.validate_jwt(key)
         claims = json.loads(jwt.claims)
-        if not cls.verify_claims(claims):
+        if not cls.verify_claims(claims, nonce):
             raise cls.JWTException()
         user, created = cls.get_or_create_user(profile=claims)
         return user
@@ -54,7 +54,7 @@ class JWTAuthentication:
             return None, False
 
     @classmethod
-    def verify_claims(cls, claims):
+    def verify_claims(cls, claims, nonce=None):
         if get_setting('JWT_CLIENT.CLIENT_ID') not in claims.get('aud', []):
             return False
         url = get_setting('JWT_CLIENT.OPENID2_URL')
@@ -64,5 +64,7 @@ class JWTAuthentication:
         if iss is None:
             return False
         if not url.startswith(iss):
+            return False
+        if nonce is not None and claims.get('nonce') != nonce:
             return False
         return True

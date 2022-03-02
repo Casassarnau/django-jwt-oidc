@@ -3,7 +3,10 @@ from django.urls import path
 from django_jwt import views
 from django_jwt.settings_utils import get_setting
 
-urlpatterns = []
+urlpatterns = [
+    path('login', views.LoginView.as_view(), name='oidc_login'),
+    path('logout', views.LogoutView.as_view(), name='oidc_logout'),
+]
 
 if get_setting('JWT_CLIENT.OPENID2_URL') == 'fake':
     urlpatterns.extend([

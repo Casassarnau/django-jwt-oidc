@@ -29,8 +29,9 @@ class OpenId2Info:
             raise JWTClientException('OpenID returned error code %s on openid-configuration: %s' % (r.status, url))
         data = json.loads(r.data.decode('UTF-8'))
         self.jwks_uri = data.get('jwks_uri', None)
-        if self.jwks_uri is None:
-            raise JWTClientException('jkws_uri not found in OpenId openid-configuration url')
+        self.authorization_endpoint = data.get('authorization_endpoint', None)
+        if self.jwks_uri is None or self.authorization_endpoint is None:
+            raise JWTClientException('jkws_uri or authorization_endpoint not found in OpenId openid-configuration url')
         self.fetch_jwks()
 
     # Updates all the actual JWKS from the OPenId server
