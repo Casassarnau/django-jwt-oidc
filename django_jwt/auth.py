@@ -54,8 +54,10 @@ class JWTAuthentication:
             return None, False
 
     @classmethod
-    def verify_claims(cls, claims, nonce=None):
-        if get_setting('JWT_CLIENT.CLIENT_ID') not in claims.get('aud', []):
+    def verify_claims(cls, claims, nonce=None, client_id=None):
+        if client_id is None:
+            client_id = get_setting('JWT_CLIENT.CLIENT_ID')
+        if client_id not in claims.get('aud', []):
             return False
         url = get_setting('JWT_CLIENT.OPENID2_URL')
         if url in ['local', 'fake']:

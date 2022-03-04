@@ -20,6 +20,24 @@ INSTALLED_APPS = [
 
 ## Django [WIP]
 This is what you need to do in order that your Django application will authenticate with JWT.
+ 
+- Add `django_jwt.urls` to your app urls.
+- Add `JWTAuthenticationMiddleware` into your middleware after `AuthenticationMiddleware`.
+```python
+MIDDLEWARE = [
+    ...
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django_jwt.middleware.JWTAuthenticationMiddleware',
+    ...
+]
+```
+- Set the `RESPONSE_TYPE` setting into your `JWT_CLIENT` setting to `id_token`.
+```python
+JWT_CLIENT = {
+    ...
+    'RESPONSE_TYPE': 'id_token',
+}
+```
 
 ## RestFramework
 This settings are for views inherits RestFramework library from Django.

@@ -48,9 +48,18 @@ class Key(models.Model):
 
 
 class WebPage(models.Model):
+    RESPONSE_PARAMS = '?'
+    RESPONSE_HASH = '#'
+    RESPONSE_TYPES = [
+        (RESPONSE_HASH, 'Hash'),
+        (RESPONSE_PARAMS, 'Params')
+    ]
+
     id = models.CharField(primary_key=True, default=uuid.uuid4, editable=False, max_length=40, verbose_name='Client id')
     host = models.CharField(unique=True, max_length=200)
     needs_confirmation = models.BooleanField(default=True)
+    logout_all = models.BooleanField(default=True)
+    response_type = models.CharField(max_length=1, choices=RESPONSE_TYPES, default=RESPONSE_HASH)
 
     def __str__(self):
         return self.host
