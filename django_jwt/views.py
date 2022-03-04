@@ -41,7 +41,15 @@ class LoginView(View):
 
 class LogoutView(View):
     def get(self, request, *args, **kwargs):
-        response = redirect('/')
+        redirect_uri = get_setting('LOGOUT_REDIRECT_URL')
+        if request.user.is_authenticated and OpenId2Info().end_session_endpoint is not None:
+            token = request.get_signed_cookie(get_setting('JWT_CLIENT.COOKIE_NAME'), None,
+                                              salt=get_setting('SECRET_KEY'))
+            params = {'post_logout_redirect_uri': request.build_absolute_uri(), 'id_token_hint': token}
+            response = redirect(OpenId2Info().end_session_endpoint + '?' + urlencode(params))
+            response.delete_cookie(get_setting('JWT_CLIENT.COOKIE_NAME'))
+        else:
+            response = redirect(redirect_uri)
         response.delete_cookie(get_setting('JWT_CLIENT.COOKIE_NAME'))
         return response
 

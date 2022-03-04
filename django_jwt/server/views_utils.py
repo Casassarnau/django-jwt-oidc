@@ -24,7 +24,7 @@ def create_jwt_code(request, session, token, access_token=None):
     jwk = Key.get_actual_jwk()
     if token == 'access_token':
         claims = {'aud': [request.build_absolute_uri(reverse('userinfo_endpoint'))],
-                  'azp': session.web.id, 'scope': 'openid profile', 'sub': request.user.id}
+                  'azp': session.web.id, 'scope': 'openid profile', 'sub': request.user.pk}
         expiration_time = timedelta(seconds=7200)
     else:
         claims = {'aud': [session.web.id]}
@@ -33,7 +33,7 @@ def create_jwt_code(request, session, token, access_token=None):
         for attribute in session.web.attributewebpage_set.filter(restrict=False):
             claims[attribute.attribute] = get_value(request.user, attribute.value.split('.'))
         if claims.get('sub', None) is None:
-            claims['sub'] = request.user.id
+            claims['sub'] = request.user.pk
     claims.update({'iss': request.build_absolute_uri('/'),
                    'iat': int(now.timestamp()),
                    'exp': int((now + expiration_time).timestamp()),
