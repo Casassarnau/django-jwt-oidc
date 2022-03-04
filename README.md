@@ -38,6 +38,7 @@ JWT_CLIENT = {
     'RESPONSE_TYPE': 'id_token',
 }
 ```
+- Set the django setting `LOGOUT_REDIRECT_URL` in order to redirect after logout.
 
 ## RestFramework
 This settings are for views inherits RestFramework library from Django.
