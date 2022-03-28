@@ -9,7 +9,7 @@ class DjangoJwtConfig(AppConfig):
     name = 'django_jwt'
 
     def ready(self):
-        client_type = get_setting('JWT_CLIENT.CLIENT_TYPE')
+        client_type = get_setting('JWT_CLIENT.TYPE')
         if client_type == 'local':
             apps = get_setting('INSTALLED_APPS')
             if 'django_jwt.server' not in apps:
