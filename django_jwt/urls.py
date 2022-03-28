@@ -8,7 +8,7 @@ urlpatterns = [
     path('logout', views.LogoutView.as_view(), name='oidc_logout'),
 ]
 
-if get_setting('JWT_CLIENT.OPENID2_URL') == 'fake':
+if get_setting('JWT_CLIENT.TYPE') == 'fake':
     urlpatterns.extend([
         path('jwks', views.jwks, name="fake_jwks"),
         path('fake-login', views.fake_login, name="fake_login"),
