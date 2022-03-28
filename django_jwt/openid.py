@@ -5,11 +5,12 @@ import urllib3
 from jwcrypto.jwk import JWKSet
 
 from django_jwt.exceptions import JWTClientException
+from django_jwt.patterns import Singleton
 from django_jwt.settings_utils import get_setting
 
 
 # singleton class that saves all information from the OpenId server
-class OpenId2Info:
+class OpenId2Info(metaclass=Singleton):
     def __init__(self):
         url = get_setting('JWT_CLIENT.OPENID2_URL')
         client_type = get_setting('JWT_CLIENT.TYPE')
@@ -37,11 +38,12 @@ class OpenId2Info:
 
     # Updates all the actual JWKS from the OPenId server
     def fetch_jwks(self):
+        logger = logging.getLogger(__name__)
+        logger.info('Fetching JWKs')
         http = urllib3.PoolManager()
         r = http.request('GET', self.jwks_uri)
         if r.status != 200:
             error_message = 'OpenID returned error code %s on jwks_uri: %s' % (r.status, self.jwks_uri)
-            logger = logging.getLogger(__name__)
             logger.critical(error_message)
             raise JWTClientException(error_message)
         self.jwks = JWKSet.from_json(r.data.decode('UTF-8'))
