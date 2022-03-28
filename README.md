@@ -102,15 +102,14 @@ Access tokens expire after 1 hour kept by the Implicit Flow protocol. <br>
 The settings are separated into 2 main Django settings `JWT_CLIENT` for the `django_jwt` app and `JWT_SERVER` for the `django_jwt.server` app.
 
 ### OPENID2_URL [ JWT_CLIENT ]
-There is 3 types of configurations for this field:
-
-- **URL:** The openid service url without the `/.well-known/openid-configuration` path.
-- **Fake server:** In case of **development** and using jwt from the fake server you need to set this to `'fake'`.
-- **OpenId server:** If you want to deploy the openId app, you need to set to `'local'` in order to validate jwt tokens. Only for RestFramework.
+The openid service url without the `/.well-known/openid-configuration` path.
 
 ### CLIENT_ID [ JWT_CLIENT ]
 This is the client id of the openId service you are using. <br>
 If you want to validate the jwt from the OpenId server by `django_jwt.server` app you will need to add here the generated client_id on the admin page.
+
+### TYPE [ JWT_CLIENT ]
+This has 3 settings: `remote`, `local` and `fake` in order to use any of these types.
 
 ### RENAME_ATTRIBUTES [ JWT_CLIENT ]
 Dictionary to redirect the data and the `sub` attribute into the User attributes.
@@ -131,6 +130,7 @@ String that represents the identification of the cookie id of the JWT.
 JWT_CLIENT = {
     'OPENID2_URL': 'https://localhost:8000',    # Required
     'CLIENT_ID': 'client_id',                   # Required
+    'TYPE': 'remote',                           # Required
     'RENAME_ATTRIBUTES': {'sub': 'username'},   # Optional
     'DEFAULT_ATTRIBUTES': {},                   # Optional
     'CREATE_USER': True,                        # optional

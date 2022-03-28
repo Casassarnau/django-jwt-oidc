@@ -26,10 +26,11 @@ class LoginView(View):
                 'response_type': get_setting('JWT_CLIENT.RESPONSE_TYPE')
             }
             return redirect(OpenId2Info().authorization_endpoint + '?' + urlencode(params))
-        if request.GET.get('state', None) != request.session['state']:
+        req_state = request.GET.get('state', None)
+        if req_state is not None and req_state != request.session.get('state', None):
             return HttpResponseBadRequest()
         try:
-            user = JWTAuthentication.authenticate_credentials(id_token, nonce=request.session['nonce'])
+            user = JWTAuthentication.authenticate_credentials(id_token, nonce=request.session.get('nonce', ''))
         except JWTAuthentication.JWTException:
             return HttpResponseBadRequest()
         if user is None:

@@ -1,7 +1,7 @@
 import json
+import logging
 
 import urllib3
-from django.urls import reverse
 from jwcrypto.jwk import JWKSet
 
 from django_jwt.exceptions import JWTClientException
@@ -12,21 +12,21 @@ from django_jwt.settings_utils import get_setting
 class OpenId2Info:
     def __init__(self):
         url = get_setting('JWT_CLIENT.OPENID2_URL')
-        if url == 'local':
+        client_type = get_setting('JWT_CLIENT.TYPE')
+        if client_type == 'local':
             apps = get_setting('INSTALLED_APPS')
             if 'django_jwt.server' not in apps:
-                raise JWTClientException('JWT_CLIENT.OPENID2_URL not set or django_jwt.server not installed')
-            url = get_setting('DEFAULT_DOMAIN') + reverse('oidc_config')
-        elif url == 'fake':
-            url = get_setting('DEFAULT_DOMAIN') + reverse('fake_config')
-        else:
-            url += '/.well-known/openid-configuration'
+                raise JWTClientException('django_jwt.server not installed for type local')
+        url += '/.well-known/openid-configuration'
 
         # Getting urls info from OpenId server
         http = urllib3.PoolManager()
         r = http.request('GET', url)
         if r.status != 200:
-            raise JWTClientException('OpenID returned error code %s on openid-configuration: %s' % (r.status, url))
+            error_message = 'OpenID returned error code %s on openid-configuration: %s' % (r.status, url)
+            logger = logging.getLogger(__name__)
+            logger.critical(error_message)
+            raise JWTClientException(error_message)
         data = json.loads(r.data.decode('UTF-8'))
         self.jwks_uri = data.get('jwks_uri', None)
         self.authorization_endpoint = data.get('authorization_endpoint', None)
@@ -40,5 +40,8 @@ class OpenId2Info:
         http = urllib3.PoolManager()
         r = http.request('GET', self.jwks_uri)
         if r.status != 200:
-            raise JWTClientException('OpenID returned error code %s on jwks_uri: %s' % (r.status, self.jwks_uri))
+            error_message = 'OpenID returned error code %s on jwks_uri: %s' % (r.status, self.jwks_uri)
+            logger = logging.getLogger(__name__)
+            logger.critical(error_message)
+            raise JWTClientException(error_message)
         self.jwks = JWKSet.from_json(r.data.decode('UTF-8'))

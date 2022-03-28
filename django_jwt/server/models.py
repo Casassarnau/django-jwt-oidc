@@ -36,6 +36,8 @@ class Key(models.Model):
         except cls.DoesNotExist:
             key = cls()
             key.save()
+        except cls.MultipleObjectsReturned:
+            key = cls.objects.filter(date__gt=(now - expiration_time)).order('-date').first()
         return key.to_jwk()
 
     @classmethod

@@ -16,7 +16,7 @@ class JWTAuthentication:
         jwt = cls.validate_jwt(key)
         claims = json.loads(jwt.claims)
         if not cls.verify_claims(claims, nonce):
-            raise cls.JWTException()
+            raise cls.JWTException('Token is not valid')
         user, created = cls.get_or_create_user(profile=claims)
         return user
 
@@ -26,11 +26,11 @@ class JWTAuthentication:
             jwt = JWT(jwt=token, key=OpenId2Info().jwks)
         except JWTMissingKey:
             if second:
-                raise cls.JWTException()
+                raise cls.JWTException('JWK not found')
             OpenId2Info().fetch_jwks()
             jwt = cls.validate_jwt(token=token, second=True)
         except Exception:
-            raise cls.JWTException()
+            raise cls.JWTException('Token format is not valid or expired')
         return jwt
 
     @classmethod
@@ -60,8 +60,6 @@ class JWTAuthentication:
         if client_id not in claims.get('aud', []):
             return False
         url = get_setting('JWT_CLIENT.OPENID2_URL')
-        if url in ['local', 'fake']:
-            url = get_setting('DEFAULT_DOMAIN') + '/'
         iss = claims.get('iss', None)
         if iss is None:
             return False
