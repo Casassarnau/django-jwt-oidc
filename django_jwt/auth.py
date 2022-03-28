@@ -1,10 +1,11 @@
 import json
+import logging
 
 from django.contrib.auth import get_user_model
 from jwcrypto.jwt import JWT, JWTMissingKey
 
 from django_jwt.openid import OpenId2Info
-from django_jwt.settings_utils import get_setting
+from django_jwt.settings_utils import get_setting, get_domain_from_url
 
 
 class JWTAuthentication:
@@ -29,7 +30,9 @@ class JWTAuthentication:
                 raise cls.JWTException('JWK not found')
             OpenId2Info().fetch_jwks()
             jwt = cls.validate_jwt(token=token, second=True)
-        except Exception:
+        except Exception as e:
+            logger = logging.getLogger(__name__)
+            logger.info(e)
             raise cls.JWTException('Token format is not valid or expired')
         return jwt
 
@@ -55,16 +58,19 @@ class JWTAuthentication:
 
     @classmethod
     def verify_claims(cls, claims, nonce=None, client_id=None):
+        logger = logging.getLogger(__name__)
         if client_id is None:
             client_id = get_setting('JWT_CLIENT.CLIENT_ID')
         if client_id not in claims.get('aud', []):
+            logger.info('Client id not in aud')
             return False
-        url = get_setting('JWT_CLIENT.OPENID2_URL')
-        iss = claims.get('iss', None)
-        if iss is None:
-            return False
-        if not url.startswith(iss):
+        openid_domain = get_domain_from_url(get_setting('JWT_CLIENT.OPENID2_URL'))
+        iss_domain = get_domain_from_url(claims.get('iss', ''))
+        # openid_domain can't be '' because of apps.py
+        if openid_domain != iss_domain:
+            logger.info('Issuer %s is not from OPENID2_URL %s' % (claims.get('iss', ''), openid_domain))
             return False
         if nonce is not None and claims.get('nonce') != nonce:
+            logger.info('Nonce changed')
             return False
         return True

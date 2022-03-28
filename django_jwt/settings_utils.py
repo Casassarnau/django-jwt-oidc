@@ -40,3 +40,7 @@ def get_setting(names):
     converter = JWT_DEFAULT_CONVERTERS.get(names, lambda x: x)
     value = converter(value)
     return value
+
+
+def get_domain_from_url(url):
+    return '/'.join(url.split('/')[0:3])
