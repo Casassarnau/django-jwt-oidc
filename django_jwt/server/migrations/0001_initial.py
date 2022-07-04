@@ -12,7 +12,9 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = []
+    dependencies = [
+        ('sessions', '0001_initial'),
+    ]
 
     operations = [
         migrations.CreateModel(

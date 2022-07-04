@@ -18,7 +18,7 @@ INSTALLED_APPS = [
 ]
 ```
 
-## Django [WIP]
+## Django MIDDLEWARE
 This is what you need to do in order that your Django application will authenticate with JWT.
  
 - Add `django_jwt.urls` to your app urls.
@@ -131,7 +131,7 @@ JWT_CLIENT = {
     'OPENID2_URL': 'https://localhost:8000',    # Required
     'CLIENT_ID': 'client_id',                   # Required
     'TYPE': 'remote',                           # Required
-    'RENAME_ATTRIBUTES': {'sub': 'username'},   # Optional
+    'RENAME_ATTRIBUTES': {'sub': 'username'},   # Optional (sub is username by default)
     'DEFAULT_ATTRIBUTES': {},                   # Optional
     'CREATE_USER': True,                        # optional
     'COOKIE_NAME': 'id_token'                   # Optional

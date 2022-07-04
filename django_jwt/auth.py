@@ -48,7 +48,8 @@ class JWTAuthentication:
             change_field = getattr(model, 'change_%s' % key, None)
             if change_field is not None:
                 defaults[key] = change_field(model, value)
-        kwargs = {model.USERNAME_FIELD: defaults[model.USERNAME_FIELD]}
+        sub_field = translation.get('sub', None) or model.USERNAME_FIELD
+        kwargs = {sub_field: defaults[model.USERNAME_FIELD]}
         if get_setting('JWT_CLIENT.CREATE_USER'):
             return model.objects.get_or_create(defaults=defaults, **kwargs)
         try:
