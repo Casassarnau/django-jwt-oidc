@@ -10,6 +10,7 @@ from jwcrypto.jwk import JWK
 from jwcrypto.jwt import JWT
 
 from django_jwt.patterns import Singleton
+from django_jwt.settings_utils import get_setting
 
 
 class FakeJWT(metaclass=Singleton):
@@ -87,6 +88,7 @@ def crear_url_amb_jwt(request):
     access_token = fake_jwt.generate_jwt(claim=claim)
     claim['at_hash'] = calculate_at_hash(access_token, hashlib.sha256)
     id_token = fake_jwt.generate_jwt(claim=claim)
-    url = "%s#access_token=%s&id_token=%s&state=%s" % (request.GET.get('redirect_uri'), access_token,
-                                                       str(id_token), request.GET.get('state'))
+    url = "%s%saccess_token=%s&id_token=%s&state=%s" % (request.GET.get('redirect_uri'),
+                                                        get_setting('JWT_CLIENT.RESPONSE_TYPE'), access_token,
+                                                        str(id_token), request.GET.get('state'))
     return url
