@@ -89,6 +89,6 @@ def crear_url_amb_jwt(request):
     claim['at_hash'] = calculate_at_hash(access_token, hashlib.sha256)
     id_token = fake_jwt.generate_jwt(claim=claim)
     url = "%s%saccess_token=%s&id_token=%s&state=%s" % (request.GET.get('redirect_uri'),
-                                                        get_setting('JWT_CLIENT.RESPONSE_TYPE'), access_token,
+                                                        get_setting('JWT_CLIENT.REQUEST_RESPONSE_TYPE'), access_token,
                                                         str(id_token), request.GET.get('state'))
     return url
