@@ -44,12 +44,15 @@ class JWTAuthentication:
         defaults = get_setting('JWT_CLIENT.DEFAULT_ATTRIBUTES')
         defaults.update({translation.get(key, key): value for key, value in profile.items()
                          if translation.get(key, key) in model_fields})
+        defaults['sub'] = profile['sub']
         for key, value in defaults.items():
             change_field = getattr(model, 'change_%s' % key, None)
             if change_field is not None:
                 defaults[key] = change_field(model, value)
-        sub_field = translation.get('sub', None) or model.USERNAME_FIELD
-        kwargs = {sub_field: defaults[model.USERNAME_FIELD]}
+        sub_field = translation.get('sub', None) or 'sub'
+        kwargs = {sub_field: defaults[sub_field]}
+        if 'sub' not in model_fields:
+            del defaults['sub']
         if get_setting('JWT_CLIENT.CREATE_USER'):
             return model.objects.get_or_create(defaults=defaults, **kwargs)
         try:
