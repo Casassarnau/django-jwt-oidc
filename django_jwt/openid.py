@@ -42,9 +42,9 @@ class OpenId2Info(metaclass=Singleton):
         self.jwks = None
         self.userinfo_endpoint = None
         self.client_type = get_setting('JWT_OIDC.TYPE')
-        if self.client_type == 'client':
+        if self.client_type == 'provider':
             self.__init_local__()
-        elif self.client_type == 'provider':
+        elif self.client_type == 'client':
             self.__init_remote__()
         self.fetch_jwks()
 
@@ -52,7 +52,7 @@ class OpenId2Info(metaclass=Singleton):
     def fetch_jwks(self):
         logger = logging.getLogger(__name__)
         logger.info('Fetching JWKs')
-        if self.client_type == 'remote':
+        if self.client_type == 'client':
             http = urllib3.PoolManager()
             r = http.request('GET', self.jwks_uri)
             if r.status != 200:
