@@ -31,7 +31,7 @@ class LoginView(View):
         return self.generate_authentication_and_authorization_request()
 
     def add_optional_parameter_to_dict(self, params, optional_param):
-        optional_param_value = get_setting('JWT_OIDC.CLIENT_' + optional_param.title())
+        optional_param_value = get_setting('JWT_OIDC.CLIENT_' + optional_param.upper())
         if optional_param_value is not None:
             params[optional_param] = optional_param_value
 
