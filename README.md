@@ -67,7 +67,6 @@ SILENCED_SYSTEM_CHECKS = ['admin.E408']
 <details>
 <summary><h3>RestFramework [Optional]</h3></summary>
 <br>
-
 This settings are for views inherits RestFramework library from Django.
 
 - **You will need to [install RestFramework](https://www.django-rest-framework.org/#installation) on your own to your app first**

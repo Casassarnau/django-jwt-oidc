@@ -22,7 +22,10 @@ class OpenId2Info(metaclass=Singleton):
         http = urllib3.PoolManager()
         r = http.request('GET', url)
         if r.status != 200:
-            raise JWTClientException('OpenID returned error code %s on openid-configuration: %s' % (r.status, url))
+            error_message = 'OpenID returned error code %s on openid-configuration: %s' % (r.status, url)
+            logger = logging.getLogger(__name__)
+            logger.critical(error_message)
+            raise JWTClientException(error_message)
         data = json.loads(r.data.decode('UTF-8'))
         self.jwks_uri = data.get('jwks_uri', None)
         self.token_endpoint = data.get('token_endpoint', None)

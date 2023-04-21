@@ -1,5 +1,4 @@
 from django.apps import AppConfig
-from django.urls import reverse, NoReverseMatch
 
 from django_jwt.settings_utils import get_setting
 

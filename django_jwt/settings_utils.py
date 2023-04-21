@@ -45,6 +45,8 @@ def get_setting(names):
             value = getattr(value, name, default)
     if value == NoDefault:
         raise Exception('Setting %s is required' % names)
+    converter = JWT_DEFAULT_CONVERTERS.get(names, lambda x: x)
+    value = converter(value)
     return value
 
 

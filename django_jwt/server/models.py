@@ -49,6 +49,8 @@ class Key(models.Model):
         except cls.DoesNotExist:
             key = cls()
             key.save()
+        except cls.MultipleObjectsReturned:
+            key = cls.objects.filter(date__gt=(now - expiration_time)).order_by('-date').first()
         return key.to_jwk()
 
     @classmethod
@@ -62,6 +64,13 @@ class Key(models.Model):
 
 
 class WebPage(models.Model):
+    RESPONSE_PARAMS = '?'
+    RESPONSE_HASH = '#'
+    RESPONSE_TYPES = [
+        (RESPONSE_HASH, 'Hash'),
+        (RESPONSE_PARAMS, 'Params')
+    ]
+
     id = models.CharField(primary_key=True, default=uuid.uuid4, editable=False, max_length=40, verbose_name='Client id')
     client_secret = models.CharField(default=uuid.uuid4, editable=False, max_length=40)
     host = models.CharField(unique=True, max_length=200)
