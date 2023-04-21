@@ -73,6 +73,8 @@ class AuthorizationView(LoginRequiredMixin, TemplateView):
     def required_to_log_in(self):
         max_age = self.request.GET.get('max_age', None)
         login_date = self.request.session.get('login_date', None)
+        if max_age is None or login_date is None:
+            return False
         max_login_age = timezone.now() - timezone.timedelta(seconds=int(max_age))
         return login_date < max_login_age
 
@@ -81,10 +83,15 @@ class AuthorizationView(LoginRequiredMixin, TemplateView):
         if (prompt == 'login' and self.request.session.get('oidc_loging_again', None) is None) or \
                 self.required_to_log_in():
             self.request.session['oidc_loging_again'] = True
-            return redirect(get_setting('LOGIN_URL'))
+            return redirect(get_setting('LOGIN_URL') + '?' + urlencode({'next': self.request.get_full_path()}))
         if prompt == 'select_account' and self.request.session.get('oidc_select_user', None) is None:
             self.request.session['oidc_select_user'] = True
-            return redirect(get_setting('SELECT_USER_URL'))
+            return redirect(get_setting('SELECT_USER_URL') + '?' +
+                            urlencode({'next': self.request.get_full_path()}))
+        if self.request.session.get('oidc_select_user', None) is not None:
+            del self.request.session['oidc_select_user']
+        if self.request.session.get('oidc_loging_again', None) is not None:
+            del self.request.session['oidc_loging_again']
         return None
 
     def get(self, request, *args, **kwargs):

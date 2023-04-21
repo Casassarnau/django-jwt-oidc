@@ -105,7 +105,7 @@ class JWTAuthentication:
                 return False
         else:
             if client_id is None:
-                client_id = get_setting('JWT_CLIENT.CLIENT_ID')
+                client_id = get_setting('JWT_OIDC.CLIENT_ID')
             if client_id not in claims.get('aud', []):
                 logger.info('Client id not in aud')
                 return False
