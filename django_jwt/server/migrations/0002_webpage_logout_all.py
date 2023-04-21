@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('server', '0001_initial'),
+        ('django_jwt_server', '0001_initial'),
     ]
 
     operations = [
