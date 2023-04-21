@@ -6,25 +6,32 @@ class NoDefault:
 
 
 JWT_DEFAULT_SETTINGS = {
-    'JWT_CLIENT.RENAME_ATTRIBUTES': {},
-    'JWT_CLIENT.DEFAULT_ATTRIBUTES': {},
-    'JWT_CLIENT.CREATE_USER': False,
-    'JWT_CLIENT.COOKIE_NAME': 'id_token',
-    'JWT_SERVER.JWK_EXPIRATION_TIME': 3600,
-    'JWT_SERVER.JWT_EXPIRATION_TIME': 14400,
-    'LOGOUT_URL': 'logout',
-    'JWT_CLIENT.REQUEST_RESPONSE_TYPE': '#',
+    # 'JWT_OIDC.DISCOVERY_ENDPOINT': Required
+    # 'JWT_OIDC.CLIENT_ID': Required
+    # 'JWT_OIDC.TYPE': Required ['fake', 'client', 'provider']
+    # 'JWT_OIDC.CLIENT_SECRET': Required if code in RESPONSE_TYPE
+    # 'JWT_OIDC.RESPONSE_TYPE': Required
+    'JWT_OIDC.ID_TOKEN_RENAME_ATTRIBUTES': {},
+    'JWT_OIDC.USER_DEFAULT_ATTRIBUTES': {},
+    'JWT_OIDC.CREATE_USER': False,
+    'JWT_OIDC.REQUEST_RESPONSE_TYPE': '#',
+    'JWT_OIDC.PKCE_EXTENSION': False,
+    'JWT_OIDC.CODE_CHALLENGE_METHOD': 'S256',     # ['plain', 'S256'] plain is not supported
+    'JWT_OIDC.SCOPE': 'openid',
+    'JWT_OIDC.IDENTIFICATION_CLAIM': 'sub',
+    'JWT_OIDC.JWK_EXPIRATION_TIME': 3600,
+    'JWT_OIDC.JWT_ID_TOKEN_EXPIRATION_TIME': 2700,
+    'JWT_OIDC.JWT_ACCESS_TOKEN_EXPIRATION_TIME': 600,
+    'JWT_OIDC.JWT_REFRESH_TOKEN_EXPIRATION_TIME': 3600,
+    'JWT_OIDC.SIGNATURE_ALG': 'ES512',
+    'JWT_OIDC.MAX_REFRESH': 10,
+    'JWT_OIDC.USERINFO_SERIALIZER': 'django_jwt.server.serializers.UserSerializer',
+    'JWT_OIDC.USERINFO_SERIALIZER_EXCLUDE': ['password'],
 }
 
 
-def convert_url(url):
-    if len(url) > 0 and url[-1] == '/':
-        url = url[:-1]
-    return url
-
-
 JWT_DEFAULT_CONVERTERS = {
-    'JWT_CLIENT.OPENID2_URL': convert_url,
+
 }
 
 
@@ -45,3 +52,9 @@ def get_setting(names):
 
 def get_domain_from_url(url):
     return '/'.join(url.split('/')[0:3])
+
+
+def get_max_time_token():
+    return max([get_setting('JWT_OIDC.JWT_ID_TOKEN_EXPIRATION_TIME'),
+                get_setting('JWT_OIDC.JWT_ACCESS_TOKEN_EXPIRATION_TIME'),
+                get_setting('JWT_OIDC.JWT_REFRESH_TOKEN_EXPIRATION_TIME')])
