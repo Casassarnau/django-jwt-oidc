@@ -8,7 +8,6 @@ from django_jwt.openid import OpenId2Info
 from django_jwt.settings_utils import get_setting, get_domain_from_url
 
 
-
 logger = logging.getLogger(__name__)
 
 
