@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-                ('web', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='server.webpage')),
+                ('web', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='django_jwt_server.webpage')),
             ],
         ),
         migrations.CreateModel(
@@ -48,7 +48,7 @@ class Migration(migrations.Migration):
                 ('extra_id', models.CharField(default=uuid.uuid4, max_length=40, unique=True)),
                 ('date', models.DateTimeField(auto_now_add=True)),
                 ('session', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='sessions.session')),
-                ('web', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='server.webpage')),
+                ('web', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='django_jwt_server.webpage')),
             ],
         ),
         migrations.CreateModel(
@@ -58,7 +58,7 @@ class Migration(migrations.Migration):
                 ('attribute', models.CharField(max_length=100)),
                 ('value', models.CharField(max_length=100)),
                 ('restrict', models.BooleanField(default=False)),
-                ('web', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='server.webpage')),
+                ('web', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='django_jwt_server.webpage')),
             ],
         ),
     ]
