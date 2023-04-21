@@ -10,6 +10,7 @@ from jwcrypto.jwk import JWK
 from jwcrypto.jwt import JWT
 
 from django_jwt.patterns import Singleton
+from django_jwt.settings_utils import get_setting
 
 
 class FakeJWT(metaclass=Singleton):
@@ -69,12 +70,12 @@ def calculate_at_hash(access_token, hash_alg):
     return at_hash.decode('ascii')
 
 
-def base64url_encode(input):
+def base64url_encode(input_text):
     """Helper method to base64url_encode a string.
     Args:
-        input (str): A base64url_encoded string to encode.
+        input_text (str): A base64url_encoded string to encode.
     """
-    return base64.urlsafe_b64encode(input).replace(b'=', b'')
+    return base64.urlsafe_b64encode(input_text).rstrip(b"=")
 
 
 def crear_url_amb_jwt(request):
@@ -87,6 +88,7 @@ def crear_url_amb_jwt(request):
     access_token = fake_jwt.generate_jwt(claim=claim)
     claim['at_hash'] = calculate_at_hash(access_token, hashlib.sha256)
     id_token = fake_jwt.generate_jwt(claim=claim)
-    url = "%s#access_token=%s&id_token=%s&state=%s" % (request.GET.get('redirect_uri'), access_token,
-                                                       str(id_token), request.GET.get('state'))
+    url = "%s%saccess_token=%s&id_token=%s&state=%s" % (request.GET.get('redirect_uri'),
+                                                        get_setting('JWT_OIDC.REQUEST_RESPONSE_TYPE'), access_token,
+                                                        str(id_token), request.GET.get('state'))
     return url

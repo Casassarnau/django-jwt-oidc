@@ -1,32 +1,31 @@
 from django.contrib import admin
 
-from django_jwt.server.forms import IdTokenExtraClaimAdminForm, RestrictUsersAdminForm, WebPageAdminForm
-from django_jwt.server.models import WebPage, AttributeWebPage
+from django_jwt.server.forms import WebPageAdminForm
+from django_jwt.server.models import WebPage, PrivateClaimsWebPage, RestrictUsersToWeb, WebAllowanceOtherWeb
 
 
-class WebPagesAttributesAdmin(admin.StackedInline):
+class PrivateClaimsWebPageAdmin(admin.StackedInline):
     verbose_name = 'ID Token extra claim'
-    model = AttributeWebPage
+    model = PrivateClaimsWebPage
     extra = 1
-    form = IdTokenExtraClaimAdminForm
-
-    def get_queryset(self, request):
-        return super().get_queryset(request).filter(restrict=False)
 
 
-class RestrictUsersAdmin(admin.StackedInline):
+class RestrictUsersToWebAdmin(admin.StackedInline):
     verbose_name = 'User attribute restricted'
     verbose_name_plural = 'User attributes restricted'
-    model = AttributeWebPage
+    model = RestrictUsersToWeb
     extra = 1
-    form = RestrictUsersAdminForm
 
-    def get_queryset(self, request):
-        return super().get_queryset(request).filter(restrict=True)
+
+class WebAllowanceOtherWebAdmin(admin.StackedInline):
+    verbose_name = 'Allow 3rd party web'
+    model = WebAllowanceOtherWeb
+    extra = 1
+    fk_name = 'web'
 
 
 @admin.register(WebPage)
 class WebPageFullAdmin(admin.ModelAdmin):
-    readonly_fields = ('id',)
-    inlines = [WebPagesAttributesAdmin, RestrictUsersAdmin]
+    readonly_fields = ('id', 'client_secret')
+    inlines = [PrivateClaimsWebPageAdmin, RestrictUsersToWebAdmin, WebAllowanceOtherWebAdmin]
     form = WebPageAdminForm

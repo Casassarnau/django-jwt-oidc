@@ -9,8 +9,8 @@ class DjangoJwtConfig(AppConfig):
     name = 'django_jwt'
 
     def ready(self):
-        url = get_setting('JWT_CLIENT.OPENID2_URL')
-        if url == 'local':
+        client_type = get_setting('JWT_OIDC.TYPE')
+        if client_type == 'provider':
             apps = get_setting('INSTALLED_APPS')
             if 'django_jwt.server' not in apps:
                 raise Exception('You need to add django_jwt.server into your INSTALLED_APPS in order to deploy the '
@@ -19,7 +19,7 @@ class DjangoJwtConfig(AppConfig):
                 reverse('oidc_config')
             except NoReverseMatch:
                 Exception('You need to include the django_jwt.urls into your app urls.py file')
-        if url == 'fake':
+        if client_type == 'fake':
             try:
                 reverse('fake_config')
             except NoReverseMatch:
