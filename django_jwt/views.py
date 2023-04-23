@@ -137,7 +137,6 @@ class LoginView(View):
     def get_userinfo(self, access_token):
         headers = {
             'Content-Type': 'application/json',
-            'Host': self.request.get_host(),
             'Authorization': 'Bearer %s' % access_token
         }
         http = urllib3.PoolManager()
