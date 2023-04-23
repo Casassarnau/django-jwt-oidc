@@ -94,7 +94,6 @@ class LoginView(View):
             data['code_verifier'] = self.request.session['code_verifier']
         headers = {
             'Content-Type': 'application/json',
-            'Host': self.request.get_host(),
         }
         http = urllib3.PoolManager()
         r = http.request_encode_body('POST', OpenId2Info().token_endpoint, body=json.dumps(data), headers=headers)
