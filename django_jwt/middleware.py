@@ -67,7 +67,6 @@ class JWTAuthenticationMiddleware(MiddlewareMixin):
         }
         headers = {
             'Content-Type': 'application/json',
-            'Host': request.get_host(),
         }
         http = urllib3.PoolManager()
         r = http.request('POST', OpenId2Info().token_endpoint, body=json.dumps(data), headers=headers)
