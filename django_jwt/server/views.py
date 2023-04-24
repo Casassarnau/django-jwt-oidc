@@ -12,6 +12,7 @@ from django.utils.http import urlencode
 from django.utils.module_loading import import_string
 from django.views import View
 from django.views.generic import TemplateView
+from jwcrypto.jwt import JWTExpired
 from rest_framework import viewsets, mixins
 from rest_framework.permissions import IsAuthenticated
 
@@ -232,8 +233,12 @@ class TokenView(View):
             sub_attr = web.privateclaimswebpage_set.get(claim='sub').attribute_from_user_model.replace('.', '__')
         except PrivateClaimsWebPage.DoesNotExist:
             sub_attr = 'pk'
-        user, claims = JWTAuthentication.validate_authorization_jwt(key=self.request.POST.get('refresh_token', None),
-                                                                    sub_attr=sub_attr)
+        try:
+            user, claims = JWTAuthentication.validate_authorization_jwt(key=self.request.POST.get('refresh_token',
+                                                                                                  None),
+                                                                        sub_attr=sub_attr)
+        except JWTExpired:
+            raise PermissionDenied()
         scopes = claims.get('scope', '').split(' ')
         try:
             external_session = UserExternalSession.objects.get(id=claims.get('sid', None))
