@@ -11,6 +11,7 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.http import urlencode
 from django.views import View
+from jwcrypto.jwt import JWTExpired
 
 from django_jwt.auth import JWTAuthentication
 from django_jwt.openid import OpenId2Info
@@ -77,7 +78,7 @@ class LoginView(View):
             if changed:
                 user.save()
             self.request.session[token_name] = jwt.serialize()
-        except JWTAuthentication.JWTException:
+        except (JWTAuthentication.JWTException, JWTExpired):
             logger.error('JWT authentication error.')
             return HttpResponseBadRequest('JWT authentication error.')
         return user
