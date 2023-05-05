@@ -237,7 +237,7 @@ class TokenView(View):
             user, claims = JWTAuthentication.validate_authorization_jwt(key=self.request.POST.get('refresh_token',
                                                                                                   None),
                                                                         sub_attr=sub_attr)
-        except JWTExpired:
+        except (JWTExpired, JWTAuthentication.JWTException):
             raise PermissionDenied()
         scopes = claims.get('scope', '').split(' ')
         try:
