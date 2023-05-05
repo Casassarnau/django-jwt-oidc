@@ -48,7 +48,7 @@ class JWTAuthenticationMiddleware(MiddlewareMixin):
                 JWTAuthentication.validate_jwt(access_token)
             except ValueError:
                 return access_token
-            except JWTExpired:
+            except (JWTExpired, JWTAuthentication.JWTException):
                 self.refresh_token(inner_request)
                 access_token = inner_request.session.get('access_token', None)
             return access_token
