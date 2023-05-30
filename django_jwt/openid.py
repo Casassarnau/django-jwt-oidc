@@ -24,9 +24,10 @@ class OpenId2Info(metaclass=Singleton):
         if r.status != 200:
             error_message = 'OpenID returned error code %s on openid-configuration: %s' % (r.status, url)
             logger = logging.getLogger(__name__)
-            logger.critical(error_message)
-            raise JWTClientException(error_message)
-        data = json.loads(r.data.decode('UTF-8'))
+            logger.error(error_message)
+            data = get_setting('JWT_OIDC.ENDPOINTS')
+        else:
+            data = json.loads(r.data.decode('UTF-8'))
         self.jwks_uri = data.get('jwks_uri', None)
         self.token_endpoint = data.get('token_endpoint', None)
         self.authorization_endpoint = data.get('authorization_endpoint', None)
