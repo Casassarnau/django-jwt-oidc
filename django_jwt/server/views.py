@@ -256,7 +256,8 @@ class TokenView(View):
         return JsonResponse(response_object)
 
     def post(self, request, *args, **kwargs):
-        self.request.POST = json.loads(request.body.decode('utf-8'))
+        if not self.request.POST:
+            self.request.POST = json.loads(request.body.decode('utf-8'))
         web = self.check_client_secret()
         grant_type = self.request.POST.get('grant_type', None)
         if grant_type == 'refresh_token':
