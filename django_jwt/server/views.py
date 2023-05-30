@@ -1,3 +1,4 @@
+import base64
 import json
 import logging
 
@@ -172,20 +173,35 @@ class AuthorizationView(LoginRequiredMixin, TemplateView):
 
 
 class TokenView(View):
+    def get_client_info(self):
+        client_id = getattr(self.request, 'client_id', None)
+        client_secret = getattr(self.request, 'client_secret', None)
+        if client_id is not None and client_secret is not None:
+            return client_id, client_secret
+        authorization_header = self.request.META.get('HTTP_AUTHORIZATION', None)
+        if authorization_header and authorization_header.startswith('Basic '):
+            encoded_credentials = authorization_header[6:]  # Remove 'Basic ' prefix
+            credentials = base64.b64decode(encoded_credentials).decode('utf-8')
+            client_id, client_secret = credentials.split(':')
+        self.request.client_secret = self.request.POST.get('client_secret', client_secret)
+        self.request.client_id = self.request.POST.get('client_id', client_id)
+        return self.request.client_id, self.request.client_secret
+
     def check_client_secret(self):
+        client_id, client_secret = self.get_client_info()
         try:
             web = WebPage.objects.prefetch_related('privateclaimswebpage_set') \
-                .get(id=self.request.POST.get('client_id', None))
+                .get(id=client_id)
         except WebPage.DoesNotExist:
             raise PermissionDenied()
-        client_secret = self.request.POST.get('client_secret', None)
         if client_secret is not None and web.client_secret != client_secret:
             raise PermissionDenied()
         return web
 
     def authorization_code_response(self, web):
+        client_id, client_secret = self.get_client_info()
         code_verifier = self.request.POST.get('code_verifier', None)
-        if self.request.POST.get('client_secret', None) is None and code_verifier is None:
+        if client_secret is None and code_verifier is None:
             raise PermissionDenied()
         external_session = UserExternalSession.check_authorization_code(self.request.POST.get('code', None))
         if external_session is None:
