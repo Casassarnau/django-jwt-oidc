@@ -43,8 +43,8 @@ MIDDLEWARE = [
     ...
     'django.contrib.sessions.middleware.SessionMiddleware',
     ...
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django_jwt.middleware.JWTAuthenticationMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
     ...
 ]
 ```
