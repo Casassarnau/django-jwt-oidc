@@ -6,6 +6,7 @@ from rest_framework.authentication import TokenAuthentication
 from django.utils.translation import gettext_lazy as _
 
 from django_jwt.auth import JWTAuthentication
+from django_jwt.settings_utils import JWTAuthentication
 
 
 class JWTTokenAuthentication(TokenAuthentication):
@@ -13,7 +14,7 @@ class JWTTokenAuthentication(TokenAuthentication):
 
     def authenticate_credentials(self, key):
         try:
-            user, jwt = JWTAuthentication.authenticate_credentials(key)
+            user, jwt = JWTAuthentication.authenticate_credentials(key, client_id=get_setting('JWT_OIDC.CLIENT_ID'))
         except (JWTAuthentication.JWTException, JWTExpired) as e:
             logger = logging.getLogger(__name__)
             logger.warning(e)
