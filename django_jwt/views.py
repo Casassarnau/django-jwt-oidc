@@ -11,6 +11,7 @@ from django.utils import timezone
 from django.utils.crypto import get_random_string
 from django.utils.http import urlencode
 from django.views import View
+from django.views.decorators.csrf import csrf_exempt
 from jwcrypto.jwt import JWTExpired
 
 from django_jwt.auth import JWTAuthentication
