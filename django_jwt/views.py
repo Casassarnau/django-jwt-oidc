@@ -181,7 +181,7 @@ def fake_login(request):
     if request.method == 'GET':
         return render(request, "django_jwt/fake_login.html")
     if request.method == 'POST':
-        if request.POST['response_type']=='code':
+        if request.GET['response_type']=='code':
             return redirect(crear_url_amb_code(request))
         else:
             return redirect(crear_url_amb_jwt(request))
