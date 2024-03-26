@@ -9,6 +9,7 @@ if get_setting('JWT_OIDC.TYPE') == 'fake':
     urlpatterns.extend([
         path('jwks', views.jwks, name="fake_jwks"),
         path('fake-login', views.fake_login, name="fake_login"),
+        path('fake-token', views.fake_token, name="fake_token"),
         path('.well-known/openid-configuration', views.fake_config, name='fake_config'),
         path('fake-userinfo', views.fake_userinfo, name='fake_userinfo'),
     ])
