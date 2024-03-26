@@ -16,7 +16,7 @@ from jwcrypto.jwt import JWTExpired
 from django_jwt.auth import JWTAuthentication
 from django_jwt.openid import OpenId2Info
 from django_jwt.settings_utils import get_setting
-from django_jwt.view_utils import crear_url_amb_jwt, get_jwks, get_sub_jwt
+from django_jwt.view_utils import crear_url_amb_jwt, crear_url_amb_code, get_tokens, get_jwks, get_sub_jwt
 
 
 logger = logging.getLogger(__name__)
@@ -159,14 +159,15 @@ class LogoutView(View):
         request.session.flush()
         return response
 
-
+@csrf_exempt
 def fake_config(request):
     config = {
         'issuer': request.build_absolute_uri('/'),
         'userinfo_endpoint': request.build_absolute_uri(reverse('fake_userinfo')),
         'authorization_endpoint': request.build_absolute_uri(reverse('fake_login')),
+        'token_endpoint': request.build_absolute_uri(reverse('fake_token')),
         'jwks_uri': request.build_absolute_uri(reverse('fake_jwks')),
-        'response_types_supported': ['id_token'],
+        'response_types_supported': ['id_token','code'],
         'subject_types_supported': ['public'],
         'id_token_signing_alg_values_supported': ['RS256'],
         'claims_supported': ['sub', 'iss', 'aud', 'exp', 'iat', 'jti', 'scope', 'azp'],
@@ -174,18 +175,25 @@ def fake_config(request):
     }
     return JsonResponse(config)
 
-
+@csrf_exempt
 def fake_login(request):
     if request.method == 'GET':
         return render(request, "django_jwt/fake_login.html")
     if request.method == 'POST':
-        return redirect(crear_url_amb_jwt(request))
+        if request.POST['response_type']=='code':
+            return redirect(crear_url_amb_code(request))
+        else:
+            return redirect(crear_url_amb_jwt(request))
 
+@csrf_exempt
+def fake_token(request):
+    return JsonResponse(get_tokens(request.POST["code"]))
 
+@csrf_exempt
 def jwks(request):
     return JsonResponse(get_jwks())
 
-
+@csrf_exempt
 def fake_userinfo(request):
     sub = get_sub_jwt(request.headers.get('Authorization').split(' ')[1])
     return JsonResponse({'sub': sub})

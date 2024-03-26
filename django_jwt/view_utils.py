@@ -79,6 +79,30 @@ def base64url_encode(input_text):
 
 
 def crear_url_amb_jwt(request):
+    tokens=crear_tokens(request)
+    url = "%s%saccess_token=%s&id_token=%s&state=%s" % (request.GET.get('redirect_uri'),
+                                                        get_setting('JWT_OIDC.REQUEST_RESPONSE_TYPE'), tokens.access_token,
+                                                        str(tokens.id_token), request.GET.get('state'))
+    return url
+
+def crear_url_amb_code(request):
+    code="fake_code"
+    tokens=crear_tokens(request)
+    save_tokens(code,tokens)
+    url = "%s?code=%s&state=%s" % (request.GET.get('redirect_uri'),code,request.GET.get('state'))
+    return url
+
+def save_tokens(code,tokens):
+    json_object = json.dumps(tokens)
+    with open('files/'+code, 'w') as file:
+        file.write(json_object)
+
+def get_tokens(code):
+    with open('files/'+code) as file:
+        tokens = json.load(file)
+    return tokens
+
+def crear_tokens(request):
     fake_jwt = FakeJWT()
     now = datetime.now()
     expiration = timedelta(days=1)
@@ -88,7 +112,11 @@ def crear_url_amb_jwt(request):
     access_token = fake_jwt.generate_jwt(claim=claim)
     claim['at_hash'] = calculate_at_hash(access_token, hashlib.sha256)
     id_token = fake_jwt.generate_jwt(claim=claim)
-    url = "%s%saccess_token=%s&id_token=%s&state=%s" % (request.GET.get('redirect_uri'),
-                                                        get_setting('JWT_OIDC.REQUEST_RESPONSE_TYPE'), access_token,
-                                                        str(id_token), request.GET.get('state'))
-    return url
+    tokens={
+        "token_type":"Bearer",
+        "access_token":access_token,
+        "id_token":id_token,
+        "expires_in":86400, # 1 dia
+        "refresh_token":access_token # No importa, no refrescarem mai
+    }
+    return tokens
